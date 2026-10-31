@@ -35,6 +35,17 @@ variable "node_role_name" {
   default     = "eksWorkerNodeRole"
 }
 
+variable "node_ami_id" {
+  type        = string
+  description = "Node AMI ID override, for example an image available in Floci. Null uses the AWS public SSM parameter."
+  default     = "ami-0abcdef1234567890"
+
+  validation {
+    condition     = var.node_ami_id == null || can(regex("^ami-[0-9a-f]+$", var.node_ami_id))
+    error_message = "node_ami_id must be null or an AMI ID starting with ami- followed by hexadecimal characters."
+  }
+}
+
 # KK Playground. Policy role must be called 'eksPolicy'
 variable "additional_policy_name" {
     type = string
