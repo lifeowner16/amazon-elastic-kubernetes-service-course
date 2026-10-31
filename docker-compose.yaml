@@ -1,0 +1,31 @@
+services:
+  floci:
+    image: floci/floci:latest
+    container_name: floci
+    ports:
+      - "4566:4566"
+    volumes:
+      - floci-data:/var/lib/floci
+      # Required if you plan to run Docker-backed services like Lambda or ECS
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - FLOCI_LOG_LEVEL=info
+      - FLOCI_DATA_DIR=/var/lib/floci
+    restart: unless-stopped
+
+  floci-ui:
+    image: floci/floci-ui:latest
+    container_name: floci-ui
+    ports:
+      - "4500:4500"
+    environment:
+      - FLOCI_ENDPOINT=http://floci:4566
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    depends_on:
+      - floci
+    restart: unless-stopped
+
+volumes:
+  floci-data:
